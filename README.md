@@ -6,7 +6,11 @@
 
 ## 效果展示
 
-![广州地铁生活便利度地图](screenshot.png)
+![核心区总览](screenshot.png)
+
+![查询弹窗](screenshot_popup.png)
+
+![高性价比筛选](screenshot_high.png)
 
 
 ## 📱 扫码在线体验
@@ -97,4 +101,5 @@ python run_all.py
 - 本项目仅用于个人学习与研究，数据版权归高德地图/OpenStreetMap 所有
 - 便利指数为基于公开数据的启发式评分，不代表官方观点
 - `secrets.json`（高德 API Key）**不随仓库公开**，请自行配置
+
 
