@@ -181,6 +181,11 @@ def build_map():
       <span style="color:#999">数据截至 {datetime.now(CN_TZ).strftime('%Y-%m-%d')} · OSM 抽样</span><br>
       <label>指数 ≥ <input id="idxMin" type="number" value="0" min="0" max="100" style="width:50px"></label><br>
       <label><input id="onlyTransfer" type="checkbox"> 只看换乘站</label><br>
+      <div style="margin:2px 0;line-height:24px">
+        <button onclick="checkAllLines()" style="font-size:11px;padding:2px 8px;cursor:pointer">全选</button>
+        <button onclick="uncheckAllLines()" style="font-size:11px;padding:2px 8px;cursor:pointer">全不选</button>
+        <span style="color:#999">（方便单选某条线路）</span>
+      </div>
       <div id="lineBox" style="margin:4px 0">{checkboxes}</div>
       <button onclick="applyFilter()">应用筛选</button>
       <div style="margin-top:8px">当前显示：<b id="statCount">{len(items)}</b> 站</div>
@@ -329,6 +334,14 @@ def build_map():
       if (!name) {{ out.innerHTML = '<span style="color:#c00">没有第 ' + q + ' 名（共 ' + RANKED.length + ' 站）</span>'; return; }}
       out.innerHTML = '第 ' + q + ' 名：<b>' + name + '</b>（' + STATIONS[name].idx + ' 分）';
       flyToStation(name);
+    }}
+    function checkAllLines() {{
+      document.querySelectorAll('input.lineCb').forEach(function(cb){{ cb.checked = true; }});
+      applyFilter();
+    }}
+    function uncheckAllLines() {{
+      document.querySelectorAll('input.lineCb').forEach(function(cb){{ cb.checked = false; }});
+      applyFilter();
     }}
     function openPanel() {{
       document.getElementById('ctl').classList.add('open');
