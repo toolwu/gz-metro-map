@@ -277,7 +277,8 @@ def build_map():
           layer._wgs = layer.getLatLngs().map(function(ll){{ return [ll.lat, ll.lng]; }});
           layer._gcj = GCJ_LINES[vectorLayers.lines.length] || null;
           vectorLayers.lines.push(layer);
-        }} else if (layer instanceof L.HeatLayer) {{
+        }} else if (typeof layer.setLatLngs === 'function' && !(layer instanceof L.Polyline)) {{
+          // 热力层：非 Polyline 但带 setLatLngs（L.HeatLayer 实例类引用对不上，改用方法特征识别）
           layer._wgs = HEAT_WGS;
           layer._gcj = GCJ_HEAT;
           vectorLayers.heat = layer;
@@ -286,6 +287,19 @@ def build_map():
           vectorLayers.bases.push(layer);
         }}
       }});
+
+      // 热力层是 folium 生成的全局 heat_xxx，直接按变量名抓取（eachLayer 遍历不到）
+      try {{
+        var heatKey = Object.keys(window).find(function(k){{
+          return k.indexOf('heat_') === 0 && typeof (window[k] && window[k].setLatLngs) === 'function';
+        }});
+        if (heatKey) {{
+          var hl = window[heatKey];
+          hl._wgs = HEAT_WGS;
+          hl._gcj = GCJ_HEAT;
+          vectorLayers.heat = hl;
+        }}
+      }} catch (e) {{}}
     }}
     function setVectorCoords(useGcj) {{
       vectorLayers.markers.forEach(function(m) {{
