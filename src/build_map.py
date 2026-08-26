@@ -157,9 +157,26 @@ def build_map():
     )
 
     panel_html = f"""
+    <style>
+      #menuBtn {{ display:none; }}
+      @media (max-width:700px) {{
+        #ctl {{
+          position:fixed !important; top:0 !important; right:0 !important; left:auto !important;
+          width:min(85vw,320px) !important; height:100vh !important; max-height:100vh !important;
+          border-radius:0 !important; margin:0 !important; z-index:2000 !important;
+          transform:translateX(100%); transition:transform .25s ease;
+        }}
+        #ctl.open {{ transform:translateX(0); }}
+        #menuBtn {{ display:flex; position:fixed; top:10px; right:10px; z-index:1500;
+          background:#16457F; color:#fff; border:none; border-radius:8px; padding:10px 14px;
+          font:14px 'Microsoft YaHei',sans-serif; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.25); }}
+      }}
+    </style>
+    <button id="menuBtn" onclick="openPanel()">☰ 筛选 / 查询</button>
     <div id="ctl" style="position:absolute;top:10px;right:10px;z-index:1000;background:#fff;
          border:1px solid #ccc;border-radius:8px;padding:12px;width:250px;box-shadow:0 2px 8px rgba(0,0,0,.15);
          font:12px/1.6 'Microsoft YaHei',sans-serif;max-height:90vh;overflow:auto;">
+      <button id="ctlClose" onclick="closePanel()" style="position:absolute;top:4px;right:6px;border:none;background:none;font-size:18px;cursor:pointer;color:#999;line-height:1;">✕</button>
       <b>广州地铁生活便利度</b><br>
       <span style="color:#999">数据截至 {datetime.now(CN_TZ).strftime('%Y-%m-%d')} · OSM 抽样</span><br>
       <label>指数 ≥ <input id="idxMin" type="number" value="0" min="0" max="100" style="width:50px"></label><br>
@@ -312,6 +329,14 @@ def build_map():
       if (!name) {{ out.innerHTML = '<span style="color:#c00">没有第 ' + q + ' 名（共 ' + RANKED.length + ' 站）</span>'; return; }}
       out.innerHTML = '第 ' + q + ' 名：<b>' + name + '</b>（' + STATIONS[name].idx + ' 分）';
       flyToStation(name);
+    }}
+    function openPanel() {{
+      document.getElementById('ctl').classList.add('open');
+      document.getElementById('menuBtn').style.display = 'none';
+    }}
+    function closePanel() {{
+      document.getElementById('ctl').classList.remove('open');
+      document.getElementById('menuBtn').style.display = '';
     }}
     function applyFilter() {{
       var minIdx = parseFloat(document.getElementById('idxMin').value) || 0;
