@@ -1,0 +1,5 @@
+secrets.json
+*.pbf
+debug/
+__pycache__/
+data/assets/

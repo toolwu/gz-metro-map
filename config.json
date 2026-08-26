@@ -1,0 +1,33 @@
+{
+  "scope": {
+    "city": "广州",
+    "radius_m": 1000
+  },
+  "poi": {
+    "provider": "overpass",
+    "categories": {
+      "餐饮服务": 0.25,
+      "购物服务": 0.20,
+      "生活服务": 0.20,
+      "交通设施": 0.15,
+      "医疗卫生": 0.10,
+      "科教文化": 0.10
+    },
+    "delay_ms": [1200, 2200],
+    "retry_times": 3
+  },
+  "index": {
+    "green": 75,
+    "yellow": 50
+  },
+  "map": {
+    "tiles": "osm",
+    "heat_by": "poi_total",
+    "color_by": "facility_index",
+    "center": [23.13, 113.30],
+    "zoom": 11
+  },
+  "refresh": {
+    "interval_days": 7
+  }
+}
