@@ -34,7 +34,7 @@ def add_base_layers(m):
     ).add_to(m)
     folium.TileLayer(
         tiles="https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
-        name="高德（坐标略有偏移）", attr="高德", subdomains="1234",
+        name="高德", attr="高德", subdomains="1234",
     ).add_to(m)
     folium.TileLayer(
         tiles="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -236,7 +236,7 @@ def build_map():
       try {{ mk.bringToFront(); }} catch (e) {{}}
       try {{ if (mk.getPopup()) mk.openPopup(); }} catch (e) {{}}
     }}
-    var BASE_ORDER = ['ESRI 街道（默认）', '高德（坐标略有偏移）', 'OSM', 'Carto 亮'];
+    var BASE_ORDER = ['ESRI 街道（默认）', '高德', 'OSM', 'Carto 亮'];
     function collectVectorLayers() {{
       {mapvar}.eachLayer(function(layer) {{
         if (layer instanceof L.CircleMarker) {{
@@ -321,7 +321,7 @@ def build_map():
       var count = 0;
       {mapvar}.eachLayer(function(layer){{
         if (!(layer instanceof L.CircleMarker)) return;
-        var info = DATA[layer.options.title] || {{idx:0, lines:[], transfer:false}};
+        var info = DATA[layer._name] || {{idx:0, lines:[], transfer:false}};
         var ok = info.idx >= minIdx;
         if (ok && onlyTransfer && !info.transfer) ok = false;
         if (ok && !info.lines.some(function(ln){{ return showLines[ln]; }})) ok = false;
@@ -368,7 +368,7 @@ def build_map():
     """
     m.get_root().script.add_child(folium.Element(js))
 
-    folium.LayerControl(collapsed=False).add_to(m)
+    folium.LayerControl(collapsed=False, position='bottomleft').add_to(m)
 
     out_path = OUTPUT_DIR / "广州地铁生活便利地图.html"
     m.save(str(out_path))
