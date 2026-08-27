@@ -3,3 +3,6 @@ secrets.json
 debug/
 __pycache__/
 data/assets/
+
+data/rental_index.json
+data/metro_index.json

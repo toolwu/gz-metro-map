@@ -158,6 +158,9 @@ def build_map():
 
     panel_html = f"""
     <style>
+      .st-label {{ background:transparent !important; border:none !important; box-shadow:none !important;
+        color:#16457F !important; font:bold 11px 'Microsoft YaHei',sans-serif !important;
+        text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 3px #fff; }}
       #menuBtn {{ display:none; }}
       @media (max-width:700px) {{
         #ctl {{
@@ -250,13 +253,32 @@ def build_map():
 
     var vectorLayers = {{markers: [], lines: [], heat: null, bases: []}};
     var markersByName = {{}};
+    var selectedMarker = null;
+    var currentScale = 1;
     function selectStation(name) {{
+      if (selectedMarker) {{
+        var o = selectedMarker._origStyle;
+        selectedMarker.setStyle({{radius: selectedMarker._baseRadius * currentScale, color: o.color, weight: o.weight, fillColor: o.fillColor, fillOpacity: o.fillOpacity}});
+        selectedMarker = null;
+      }}
       var mk = markersByName[name];
       if (!mk) return;
+      selectedMarker = mk;
+      mk.setStyle({{radius: mk._baseRadius * currentScale + 6, color: '#1E90FF', weight: 3, fillColor: '#1E90FF', fillOpacity: 0.95}});
       var el = mk.getElement();
       if (el) el.style.display = '';
       try {{ mk.bringToFront(); }} catch (e) {{}}
       try {{ if (mk.getPopup()) mk.openPopup(); }} catch (e) {{}}
+    }}
+    function applyZoomScale() {{
+      var z = {mapvar}.getZoom();
+      currentScale = Math.max(0.7, Math.min(1.6, 0.7 + 0.12 * (z - 11)));
+      var showLabels = z >= 14;
+      vectorLayers.markers.forEach(function(mk) {{
+        if (mk !== selectedMarker) mk.setRadius(mk._baseRadius * currentScale);
+        if (showLabels) {{ try {{ mk.openTooltip(); }} catch(e) {{}} }}
+        else {{ try {{ mk.closeTooltip(); }} catch(e) {{}} }}
+      }});
     }}
     var BASE_ORDER = ['ESRI 街道（默认）', '高德', 'OSM', 'Carto 亮'];
     function collectVectorLayers() {{
@@ -266,12 +288,17 @@ def build_map():
           layer._wgs = [ll.lat, ll.lng];
           layer._name = MARKER_NAMES[vectorLayers.markers.length] || '';
           layer._gcj = GCJ_MARKERS[vectorLayers.markers.length] || null;
+          layer._baseRadius = layer.options.radius;
           layer._origStyle = {{
             radius: layer.options.radius, color: layer.options.color,
             weight: layer.options.weight, fillColor: layer.options.fillColor,
             fillOpacity: layer.options.fillOpacity
           }};
-          if (layer._name) markersByName[layer._name] = layer;
+          if (layer._name) {{
+            markersByName[layer._name] = layer;
+            layer.bindTooltip(layer._name, {{permanent:true, direction:'top', className:'st-label'}});
+            layer.closeTooltip();
+          }}
           vectorLayers.markers.push(layer);
         }} else if (layer instanceof L.Polyline) {{
           layer._wgs = layer.getLatLngs().map(function(ll){{ return [ll.lat, ll.lng]; }});
@@ -387,6 +414,8 @@ def build_map():
     // 底图加载失败自动切换（地图初始化完成后注册）
     document.addEventListener('DOMContentLoaded', function () {{
     collectVectorLayers();
+    {mapvar}.on('zoomend', applyZoomScale);
+    applyZoomScale();
     {mapvar}.on('baselayerchange', function(e) {{
       var name = e.name || (e.layer && e.layer._baseName) || '';
       setVectorCoords(name.indexOf('高德') >= 0);
