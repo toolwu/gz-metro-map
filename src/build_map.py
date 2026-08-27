@@ -37,6 +37,10 @@ def add_base_layers(m):
         name="高德", attr="高德", subdomains="1234",
     ).add_to(m)
     folium.TileLayer(
+        tiles="https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}",
+        name="高德卫星", attr="高德", subdomains="1234",
+    ).add_to(m)
+    folium.TileLayer(
         tiles="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         name="OSM", attr="OSM",
     ).add_to(m)
@@ -274,7 +278,7 @@ def build_map():
         else {{ try {{ mk.closeTooltip(); }} catch(e) {{}} }}
       }});
     }}
-    var BASE_ORDER = ['ESRI 街道（默认）', '高德', 'OSM', 'Carto 亮'];
+    var BASE_ORDER = ['ESRI 街道（默认）', '高德', '高德卫星', 'OSM', 'Carto 亮'];
     function collectVectorLayers() {{
       {mapvar}.eachLayer(function(layer) {{
         if (layer instanceof L.CircleMarker) {{
@@ -419,7 +423,7 @@ def build_map():
     {mapvar}.on('layeradd layerremove', function(e) {{
       if (e.layer && e.layer._baseName) setTimeout(_syncBaseCoords, 50);
     }});
-    var baseNames = ['ESRI 街道（默认）', '高德（坐标略有偏移）', 'OSM', 'Carto 亮'];
+    var baseNames = ['ESRI 街道（默认）', '高德', '高德卫星', 'OSM', 'Carto 亮'];
     var errCount = {{}};
     {mapvar}.on('tileerror', function(ev){{
       var layer = ev.layer;
