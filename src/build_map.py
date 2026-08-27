@@ -256,15 +256,9 @@ def build_map():
     var selectedMarker = null;
     var currentScale = 1;
     function selectStation(name) {{
-      if (selectedMarker) {{
-        var o = selectedMarker._origStyle;
-        selectedMarker.setStyle({{radius: selectedMarker._baseRadius * currentScale, color: o.color, weight: o.weight, fillColor: o.fillColor, fillOpacity: o.fillOpacity}});
-        selectedMarker = null;
-      }}
+      // 只做"鼠标选中"效果：显示信息框 + 前置，不改颜色（保持图例一致）
       var mk = markersByName[name];
       if (!mk) return;
-      selectedMarker = mk;
-      mk.setStyle({{radius: mk._baseRadius * currentScale + 6, color: '#1E90FF', weight: 3, fillColor: '#1E90FF', fillOpacity: 0.95}});
       var el = mk.getElement();
       if (el) el.style.display = '';
       try {{ mk.bringToFront(); }} catch (e) {{}}
